@@ -20,13 +20,15 @@ func CreateTx(decodedTx string, blockchain string) {
 
 	var tx models.Tx
 	_ = json.NewDecoder(respTx.Body).Decode(&tx)
+	logsByte, _ := json.Marshal(tx.TxResponse.Logs)
+	signaturesByte, _ := json.Marshal(tx.Tx.Signatures)
+	msgByte, _ := json.Marshal(tx.Tx.Body.Messages)
 	rawQuery := fmt.Sprintf(`
 		CREATE tx:%s CONTENT {
-			hash: "%s",
 			height: "%s",
 			logs: %+v,
-			msgs: "%s",
-			signatures: "%s",
+			msgs: %+v,
+			signatures: %+v,
 			data: "%s",
 			gas_used: "%s",
 			gas_wanted: "%s",
@@ -34,7 +36,6 @@ func CreateTx(decodedTx string, blockchain string) {
 			timestamp: "%s",
 			memo: "%s"
 		};
-	`, tx.TxResponse.TxHash, tx.TxResponse.TxHash, tx.TxResponse.Height, tx.TxResponse.Logs, tx.Tx.Body.Messages, tx.Tx.Signatures, tx.TxResponse.Data, tx.TxResponse.GasUsed, tx.TxResponse.GasWanted, tx.TxResponse.Code, tx.TxResponse.Timestamp, tx.Tx.Body.Memo)
-	utils.Logger.Info(rawQuery)
+	`, tx.TxResponse.TxHash, tx.TxResponse.Height, string(logsByte), string(msgByte), string(signaturesByte), tx.TxResponse.Data, tx.TxResponse.GasUsed, tx.TxResponse.GasWanted, tx.TxResponse.Code, tx.TxResponse.Timestamp, tx.Tx.Body.Memo)
 	db.Request(blockchain, rawQuery)
 }
