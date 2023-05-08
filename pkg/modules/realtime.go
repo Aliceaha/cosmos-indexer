@@ -21,19 +21,14 @@ func Realtime(blockchain string) {
 		}
 		var result models.BlockResponse
 		_ = json.NewDecoder(resp.Body).Decode(&result)
-		block := result.BlockID.Hash
+		block := result.Block.Header.Height
 		if block != actualBlock {
 			utils.Logger.Info("new block: ", result.Block.Header.Height)
-			actualBlock = result.BlockID.Hash
+			actualBlock = block
 			go service.CreateBlock(result, blockchain)
-
-			for _, tx := range result.Block.Data.Txs {
-				decodedTx := utils.DecodeTx(tx)
-				utils.Logger.Info("	└ tx: ", decodedTx)
-				service.CreateTx(decodedTx, blockchain)
-			}
+			go service.CreateTx(result.Block.Data.Txs, blockchain)
 		}
-		time.Sleep(3 * time.Second)
+		time.Sleep(2 * time.Second)
 	}
 
 }
