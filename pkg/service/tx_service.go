@@ -20,9 +20,9 @@ func CreateTx(decodedTx string, blockchain string) {
 
 	var tx models.Tx
 	_ = json.NewDecoder(respTx.Body).Decode(&tx)
+	logsByte, _ := json.Marshal(tx.TxResponse.Logs)
 	rawQuery := fmt.Sprintf(`
 		CREATE tx:%s CONTENT {
-			hash: "%s",
 			height: "%s",
 			logs: %+v,
 			msgs: "%s",
@@ -34,7 +34,7 @@ func CreateTx(decodedTx string, blockchain string) {
 			timestamp: "%s",
 			memo: "%s"
 		};
-	`, tx.TxResponse.TxHash, tx.TxResponse.TxHash, tx.TxResponse.Height, tx.TxResponse.Logs, tx.Tx.Body.Messages, tx.Tx.Signatures, tx.TxResponse.Data, tx.TxResponse.GasUsed, tx.TxResponse.GasWanted, tx.TxResponse.Code, tx.TxResponse.Timestamp, tx.Tx.Body.Memo)
+	`, tx.TxResponse.TxHash, tx.TxResponse.Height, string(logsByte), tx.Tx.Body.Messages, tx.Tx.Signatures, tx.TxResponse.Data, tx.TxResponse.GasUsed, tx.TxResponse.GasWanted, tx.TxResponse.Code, tx.TxResponse.Timestamp, tx.Tx.Body.Memo)
 	utils.Logger.Info(rawQuery)
 	db.Request(blockchain, rawQuery)
 }

@@ -10,6 +10,7 @@ import (
 )
 
 func Request(blockchain string, statement string) string {
+	// Using the SurrealDB REST API instead of the Go lib using gorilla, cause of concurrencies issues
 	utils.Logger.Debug(statement)
 	// Set the endpoint URL
 	url := os.Getenv("SURREALDB") + "/sql"
