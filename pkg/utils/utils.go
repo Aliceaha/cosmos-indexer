@@ -15,6 +15,9 @@ var (
 
 func InitLogger() {
 	// Set the default log level to info
+	customFormatter := new(log.TextFormatter)
+	customFormatter.FullTimestamp = true
+	Logger.SetFormatter(customFormatter)
 	Logger.SetLevel(log.InfoLevel)
 }
 

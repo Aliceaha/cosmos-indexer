@@ -20,6 +20,7 @@ func CreateTx(decodedTx string, blockchain string) {
 
 	var tx models.Tx
 	_ = json.NewDecoder(respTx.Body).Decode(&tx)
+	utils.Logger.Debug(tx.TxResponse.TxHash)
 	logsByte, _ := json.Marshal(tx.TxResponse.Logs)
 	signaturesByte, _ := json.Marshal(tx.Tx.Signatures)
 	msgByte, _ := json.Marshal(tx.Tx.Body.Messages)
