@@ -16,22 +16,24 @@ type Logs struct {
 	Events   Event  `json:"events"`
 }
 
+type Messages struct {
+	Type    string `json:"@type"`
+	Grantee string `json:"grantee"`
+	Msgs    []struct {
+		Type             string `json:"@type"`
+		DelegatorAddress string `json:"delegator_address"`
+		ValidatorAddress string `json:"validator_address"`
+		Amount           struct {
+			Denom  string `json:"denom"`
+			Amount string `json:"amount"`
+		} `json:"amount"`
+	} `json:"msgs"`
+}
+
 type Tx struct {
 	Tx struct {
 		Body struct {
-			Messages []struct {
-				Type    string `json:"@type"`
-				Grantee string `json:"grantee"`
-				Msgs    []struct {
-					Type             string `json:"@type"`
-					DelegatorAddress string `json:"delegator_address"`
-					ValidatorAddress string `json:"validator_address"`
-					Amount           struct {
-						Denom  string `json:"denom"`
-						Amount string `json:"amount"`
-					} `json:"amount"`
-				} `json:"msgs"`
-			} `json:"messages"`
+			Messages                    []Messages    `json:"messages"`
 			Memo                        string        `json:"memo"`
 			TimeoutHeight               string        `json:"timeout_height"`
 			ExtensionOptions            []interface{} `json:"extension_options"`
